@@ -1,5 +1,10 @@
 # ANLP Project Bookmarks
 
+## Important links:
+- [Overlief: Proposal](https://www.overleaf.com/1793632572qynqwqwzjhyb) `08.02.21` `Arthur`
+
+
+## Useful Literature:
 - [Text Summarization Approaches for NLP – Practical Guide with Generative Examples](https://www.machinelearningplus.com/nlp/text-summarization-approaches-nlp-example/) `02.02.21` `Arthur`
 - [Summarize Reddit Comments using T5, BART, GPT-2, XLNet Models](https://towardsdatascience.com/summarize-reddit-comments-using-t5-bart-gpt-2-xlnet-models-a3e78a5ab944) `02.02.21` `Arthur`
 - [5 natural language processing techniques for extracting information](https://blog.aureusanalytics.com/blog/5-natural-language-processing-techniques-for-extracting-information) `08.02.21` `Filip`
