@@ -4,6 +4,7 @@ import matplotlib.pyplot as plot
 
 
 def goal_Overall_score(df_interest, DISPLAY):
+    # Try to convert Overall_score from string to int, else convert symbols to values
     for index in df_interest.index:
         try:
             df_interest.iloc[index, 1] = int(df_interest.iloc[index, 1])
@@ -16,7 +17,7 @@ def goal_Overall_score(df_interest, DISPLAY):
             print(index, '\t', df_interest.iloc[index, 1])
     print(df_interest.shape)
 
-
+    # Show Histogram of the Overall_scores
     if DISPLAY is True:
         plot.hist(df_interest.overall_score, bins=250)
         plot.title("Histogram: Overall score")
@@ -53,5 +54,6 @@ if __name__ == '__main__':
     # Create the dataset for Overall_score prediction from history and power txts
     df_interest = goal_Overall_score(df_interest, DISPLAY)
 
+    # Save the preprocessed dataset
     if SAVE is True:
         df_interest.to_csv("datasets/Preprocessed.csv")
