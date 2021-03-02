@@ -4,38 +4,41 @@ import matplotlib.pyplot as plot
 import nltk
 from nltk.tokenize import RegexpTokenizer
 
+
 # nltk.download('punkt')
 
+def goal_overall_score(df: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    """
+    todo: add documentation here!
+    :param df: comment on this parameter
+    :param column_name: comment on this one
+    :return: comment on the return value
+    """
 
-def goal_Overall_score():
     # Try to convert Overall_score from string to int, else convert symbols to values
-    for index in df_interest.index:
-        try:
-            df_interest.iloc[index, 1] = int(df_interest.iloc[index, 1])
-        except:
-            if df_interest.iloc[index, 1] == '∞':
-                df_interest.iloc[index, 1] = 250
-            else:
-                df_interest.iloc[index, 1] = np.nan
-        finally:
-            # print(index, '\t', df_interest.iloc[index, 1])
-            pass
-    print('\n Preprocessed shape:\t', df_interest.shape)
+    infinity_filter = df.loc[:, column_name] == '∞'
+    df.loc[infinity_filter, column_name] = 250
+    df.loc[df.loc[:, column_name] == '-', column_name] = np.nan
+    df.loc[:, column_name] = df.loc[:, column_name].astype(float)
+
+    print('\n Preprocessed shape:\t', df.shape)
 
     # Show Histogram of the Overall_scores
     if DISPLAY is True:
-        plot.hist(df_interest.overall_score, bins=250)
+        plot.hist(df.overall_score, bins=250)
         plot.title("Histogram: Overall score")
         plot.xticks(np.arange(0, 250, 25))
         plot.grid()
         plot.tight_layout()
         plot.show()
 
+    return df
 
-def goalCreators():
+
+def goal_creators():
     # Displays a pie chart representation of the creators
     if DISPLAY is True:
-        creators = df_interest.creator.value_counts().to_frame().T
+        creators = df_interest.creator.value_counts().to_frame().T  # todo: double check if this is clean code
         # print(df_interest.creator.value_counts().to_frame().T)
         plot.subplots(figsize=(10, 8))
         patches, texts = plot.pie(x=creators.values[0], startangle=90)
@@ -45,7 +48,8 @@ def goalCreators():
 
     # Replace smaller creators by 'other' -> 3 categories and leaves nan as is
     for index in df_interest.index:
-        if df_interest.iloc[index, 5] != 'Marvel Comics' and df_interest.iloc[index, 5] != 'DC Comics' and isinstance(df_interest.iloc[index, 5], float) is False:
+        if df_interest.iloc[index, 5] != 'Marvel Comics' and df_interest.iloc[index, 5] != 'DC Comics' and isinstance(
+                df_interest.iloc[index, 5], float) is False:
             df_interest.iloc[index, 5] = 'Other'
 
     # Displays a pie chart representation of the creators (Marvel / DC / Other)
@@ -62,7 +66,6 @@ def goalCreators():
 
 
 def goalAlignment():
-
     if DISPLAY is True:
         alignments = df_interest.alignment.value_counts().to_frame().T
 
@@ -81,9 +84,7 @@ def goalAlignment():
         plot.show()
 
 
-
 def goalSuperpowers():
-
     total = []
     # Transform empty superpower lists to NaN, otherwise transform superpowers from str to array.
     for index in df_interest.index:
@@ -91,10 +92,9 @@ def goalSuperpowers():
             df_interest.iloc[index, 4] = np.nan
         else:
 
-
             tokenizer = RegexpTokenizer(r'\w+')
             tok = tokenizer.tokenize(df_interest.iloc[index, 4])
-            print(df_interest.iloc[index, 4] )
+            print(df_interest.iloc[index, 4])
             print(tok)
 
 
@@ -125,9 +125,9 @@ if __name__ == '__main__':
     # Calls functions
     # -----------------------------------
     # Create the dataset for Overall_score prediction from history and power texts
-    goal_Overall_score()
+    df_interest = goal_overall_score(df_interest, 'overall_score')
     # Create the dataset for Creator prediction from history and power texts
-    goalCreators()
+    goal_creators()
     # Create the dataset for Alignment prediction from history and power texts
     goalAlignment()
     # Create the dataset for Superpowers prediction from history and power texts
