@@ -1,9 +1,13 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plot
+import nltk
+from nltk.tokenize import RegexpTokenizer
+
+# nltk.download('punkt')
 
 
-def goal_Overall_score(df_interest, DISPLAY):
+def goal_Overall_score():
     # Try to convert Overall_score from string to int, else convert symbols to values
     for index in df_interest.index:
         try:
@@ -26,10 +30,9 @@ def goal_Overall_score(df_interest, DISPLAY):
         plot.grid()
         plot.tight_layout()
         plot.show()
-    return df_interest
 
 
-def goalCreators(df_interest):
+def goalCreators():
     # Displays a pie chart representation of the creators
     if DISPLAY is True:
         creators = df_interest.creator.value_counts().to_frame().T
@@ -40,10 +43,9 @@ def goalCreators(df_interest):
         plot.title('Pie chart: Creators')
         plot.show()
 
-    # Replace smaller creators by 'other' -> 3 categories
+    # Replace smaller creators by 'other' -> 3 categories and leaves nan as is
     for index in df_interest.index:
-        # TODO: atm, nan values are replaced by 'other' --> should keep as np.nan ?
-        if df_interest.iloc[index, 5] != 'Marvel Comics' and df_interest.iloc[index, 5] != 'DC Comics' and df_interest.iloc[index, 5] != np.nan:
+        if df_interest.iloc[index, 5] != 'Marvel Comics' and df_interest.iloc[index, 5] != 'DC Comics' and isinstance(df_interest.iloc[index, 5], float) is False:
             df_interest.iloc[index, 5] = 'Other'
 
     # Displays a pie chart representation of the creators (Marvel / DC / Other)
@@ -53,18 +55,47 @@ def goalCreators(df_interest):
         plot.subplots(figsize=(10, 8))
         patches, texts = plot.pie(x=creators.values[0], startangle=90)
         plot.legend(patches, list(creators), loc="best", bbox_to_anchor=(1, 1))
-        plot.title('Pie chart: Creators (Gathered)')
+        plot.title('Pie chart: Creators (Grouped)')
         plot.show()
 
-    print(df_interest.creator)
-    return df_interest
+    # print(df_interest.creator)
 
 
-def goalAlignment(df_interest):
+def goalAlignment():
+
+    if DISPLAY is True:
+        alignments = df_interest.alignment.value_counts().to_frame().T
+
+        # Plot alignment proportion Pie Chart
+        plot.subplot(2, 1, 1)
+        patches, texts = plot.pie(x=alignments.values[0], startangle=90)
+        plot.legend(patches, list(alignments), loc="best", bbox_to_anchor=(1, 1))
+        plot.title('Pie chart: Alignment proportion')
+
+        # Plot alignment proportion Bar Chart
+        plot.subplot(2, 1, 2)
+        plot.bar(list(alignments), alignments.values[0])
+        plot.title("Bar chart: Alignment proportion")
+        plot.grid()
+        plot.tight_layout()
+        plot.show()
 
 
-    return df_interest
 
+def goalSuperpowers():
+
+    total = []
+    # Transform empty superpower lists to NaN, otherwise transform superpowers from str to array.
+    for index in df_interest.index:
+        if df_interest.iloc[index, 4] == '[]':
+            df_interest.iloc[index, 4] = np.nan
+        else:
+
+
+            tokenizer = RegexpTokenizer(r'\w+')
+            tok = tokenizer.tokenize(df_interest.iloc[index, 4])
+            print(df_interest.iloc[index, 4] )
+            print(tok)
 
 
 if __name__ == '__main__':
@@ -74,8 +105,8 @@ if __name__ == '__main__':
     DISPLAY = False
 
     # Saves DF
-    SAVE = True
-    # SAVE = False
+    # SAVE = True
+    SAVE = False
 
     # Load data into a pandas dataframe
     df_full = pd.read_csv("datasets/superheroes_nlp_dataset.csv")
@@ -94,10 +125,13 @@ if __name__ == '__main__':
     # Calls functions
     # -----------------------------------
     # Create the dataset for Overall_score prediction from history and power texts
-    df_interest = goal_Overall_score(df_interest, DISPLAY)
+    goal_Overall_score()
     # Create the dataset for Creator prediction from history and power texts
-    df_interest = goalCreators(df_interest)
-    df_interest = goalAlignment(df_interest)
+    goalCreators()
+    # Create the dataset for Alignment prediction from history and power texts
+    goalAlignment()
+    # Create the dataset for Superpowers prediction from history and power texts
+    # goalSuperpowers()
 
     # Save the preprocessed dataset
     if SAVE is True:
