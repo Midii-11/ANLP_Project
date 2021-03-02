@@ -42,7 +42,8 @@ def goalCreators(df_interest):
 
     # Replace smaller creators by 'other' -> 3 categories
     for index in df_interest.index:
-        if df_interest.iloc[index, 5] != 'Marvel Comics' and df_interest.iloc[index, 5] != 'DC Comics':
+        # TODO: atm, nan values are replaced by 'other' --> should keep as np.nan ?
+        if df_interest.iloc[index, 5] != 'Marvel Comics' and df_interest.iloc[index, 5] != 'DC Comics' and df_interest.iloc[index, 5] != np.nan:
             df_interest.iloc[index, 5] = 'Other'
 
     # Displays a pie chart representation of the creators (Marvel / DC / Other)
@@ -59,6 +60,12 @@ def goalCreators(df_interest):
     return df_interest
 
 
+def goalAlignment(df_interest):
+
+
+    return df_interest
+
+
 
 if __name__ == '__main__':
 
@@ -67,8 +74,8 @@ if __name__ == '__main__':
     DISPLAY = False
 
     # Saves DF
-    # SAVE = True
-    SAVE = False
+    SAVE = True
+    # SAVE = False
 
     # Load data into a pandas dataframe
     df_full = pd.read_csv("datasets/superheroes_nlp_dataset.csv")
@@ -90,6 +97,7 @@ if __name__ == '__main__':
     df_interest = goal_Overall_score(df_interest, DISPLAY)
     # Create the dataset for Creator prediction from history and power texts
     df_interest = goalCreators(df_interest)
+    df_interest = goalAlignment(df_interest)
 
     # Save the preprocessed dataset
     if SAVE is True:
