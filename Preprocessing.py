@@ -11,6 +11,7 @@ import spacy
 from tqdm import tqdm
 # nltk.download('punkt')
 
+
 def goal_overall_score(df: pd.DataFrame, column_name: str) -> pd.DataFrame:
     """
     This function preprocesses the "overall score" column to only contain floats. It replaces the following symbols
@@ -226,8 +227,8 @@ if __name__ == '__main__':
     DISPLAY = False
 
     # Saves DF
-    SAVE = True
-    # SAVE = False
+    # SAVE = True
+    SAVE = False
 
     # Load data into a pandas dataframe
     df_full = pd.read_csv("datasets/superheroes_nlp_dataset.csv")
@@ -257,7 +258,6 @@ if __name__ == '__main__':
     df_interest = goal_text(df_interest, 'history_text')
     # Prepares the history texts
     df_interest = goal_text(df_interest, 'powers_text')
-
 
     # Save the preprocessed dataset
     if SAVE is True:
