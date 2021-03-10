@@ -4,6 +4,11 @@
 - [Overlief: Proposal](https://www.overleaf.com/1793632572qynqwqwzjhyb) `08.02.21` `Arthur`
 
 
+## Code Examples
+
+- [Kaggle: Text classification: can you predict who is the Superhero creator using only the text columns?](https://www.kaggle.com/jonathanbesomi/superheroes-nlp-dataset/tasks?taskId=838)
+    - [Example Notebook](https://www.kaggle.com/someadityamandal/superheroes-visualization-and-prediction)
+
 ## Useful Literature:
 - [Text Summarization Approaches for NLP – Practical Guide with Generative Examples](https://www.machinelearningplus.com/nlp/text-summarization-approaches-nlp-example/) `02.02.21` `Arthur`
 - [Summarize Reddit Comments using T5, BART, GPT-2, XLNet Models](https://towardsdatascience.com/summarize-reddit-comments-using-t5-bart-gpt-2-xlnet-models-a3e78a5ab944) `02.02.21` `Arthur`
