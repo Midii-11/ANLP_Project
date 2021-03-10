@@ -223,8 +223,8 @@ def save_temp_df(df: pd.DataFrame) -> None:
 if __name__ == '__main__':
 
     # Displays graphs
-    # DISPLAY = True
-    DISPLAY = False
+    DISPLAY = True
+    # DISPLAY = False
 
     # Saves DF
     # SAVE = True
@@ -254,10 +254,13 @@ if __name__ == '__main__':
     df_interest = goal_alignment(df_interest, 'alignment')
     # Prepares the dataset for Superpowers prediction from history and power texts
     df_interest = goal_superpowers(df_interest, 'superpowers')
-    # Prepares the history texts
-    df_interest = goal_text(df_interest, 'history_text')
-    # Prepares the history texts
-    df_interest = goal_text(df_interest, 'powers_text')
+
+    # Time consuming preprocessing --> skip if in DISPLAY mode
+    if DISPLAY is False:
+        # Prepares the history texts
+        df_interest = goal_text(df_interest, 'history_text')
+        # Prepares the history texts
+        df_interest = goal_text(df_interest, 'powers_text')
 
     # Save the preprocessed dataset
     if SAVE is True:
