@@ -2,12 +2,17 @@ import joblib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from gensim.models import Word2Vec
 
 
 def encode(df: pd.DataFrame, column_y: str, column_x: str):
@@ -73,7 +78,7 @@ def tf_idf(x_train, x_test):
         """
     #TODO: check if this uses a weighted sum for tfidf calculation
     tfidf = TfidfVectorizer(stop_words='english', analyzer='word', strip_accents='unicode', sublinear_tf=True,
-                            token_pattern=r'\w{1,}', max_features=10000, ngram_range=(1, 2))
+                            token_pattern=r'\w{1,}', max_features=5000, ngram_range=(1, 2))
     tfidf.fit(x_train)
     tfidf.fit(x_test)
     x_train_tfidf = tfidf.transform(x_train)
@@ -101,11 +106,16 @@ def linear_regression(x_train, x_test, y_train, y_test, SAVE, model_name):
     # training the model...
     model = model.fit(x_train, y_train)
 
-    print(model_name, ":")
-    print(model.score(x_train, y_train))
-    print(model.score(x_test, y_test))
-    print('\n')
-
+    if SAVE is True:
+        print(model_name, ":", file=open("Terminal_Output.txt", "a"))
+        print(model.score(x_train, y_train), file=open("Terminal_Output.txt", "a"))
+        print(model.score(x_test, y_test), file=open("Terminal_Output.txt", "a"))
+        print('\n', file=open("Terminal_Output.txt", "a"))
+    else:
+        print(model_name, ":")
+        print(model.score(x_train, y_train))
+        print(model.score(x_test, y_test))
+        print('\n')
     # TODO: Graph --> line best fit
 
     # save the model to disk
@@ -133,6 +143,42 @@ def logistic_regression(x_train, y_train, SAVE, model_name):
     return model
 
 
+def naive_bayes(x_train, y_train, SAVE, model_name):
+    # instantiating the model with simple Logistic Regression..
+    model = MultinomialNB()
+    # training the model...
+    model = model.fit(x_train, y_train)
+
+    # save the model to disk
+    if SAVE is True:
+        joblib.dump(model, 'models/' + model_name + '.sav')
+    return model
+
+
+def svm_classifier(x_train, y_train, SAVE, model_name):
+    # instantiating the model with simple Logistic Regression..
+    model = SVC()
+    # training the model...
+    model = model.fit(x_train, y_train)
+
+    # save the model to disk
+    if SAVE is True:
+        joblib.dump(model, 'models/' + model_name + '.sav')
+    return model
+
+
+def random_forest_bow(x_train, y_train, SAVE, model_name):
+    # instantiating the model with simple Logistic Regression..
+    model = RandomForestClassifier()
+    # training the model...
+    model = model.fit(x_train, y_train)
+
+    # save the model to disk
+    if SAVE is True:
+        joblib.dump(model, 'models/' + model_name + '.sav')
+    return model
+
+
 def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name):
     """
     This function asses the input model
@@ -144,23 +190,37 @@ def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name):
     :param y_test                   y_test data to use
     :param DISPLAY:                 True if graphs are expected
     """
-    print(model_name, ' score:')
-    print(model.score(x_train, y_train))
-    print(model.score(x_test, y_test))
+
+    if SAVE is True:
+        print(model_name, ' score:', file=open("Terminal_Output.txt", "a"))
+        print(model.score(x_train, y_train), file=open("Terminal_Output.txt", "a"))
+        print(model.score(x_test, y_test), file=open("Terminal_Output.txt", "a"))
+    else:
+        print(model_name, ' score:')
+        print(model.score(x_train, y_train))
+        print(model.score(x_test, y_test))
 
     target_names = ['Marvel', 'DC', 'Other']
 
     # getting the predictions of the Validation Set...
     predictions = model.predict(x_test)
     # getting the Precision, Recall, F1-Score
-    print(classification_report(y_test, predictions, target_names=target_names))
+    if SAVE is True:
+       print(classification_report(y_test, predictions, target_names=target_names), file=open("Terminal_Output.txt", "a"))
+    else:
+        print(classification_report(y_test, predictions, target_names=target_names))
 
     # displays a confusion matrix of the model performance on the test set
     if DISPLAY is True:
         confusion = confusion_matrix(y_test, predictions)
-        print(model_name, ' Confusion Matrix')
-        print(confusion)
-        print('\n')
+        if SAVE is True:
+            print(model_name, ' Confusion Matrix', file=open("Terminal_Output.txt", "a"))
+            print(confusion, file=open("Terminal_Output.txt", "a"))
+            print('\n', file=open("Terminal_Output.txt", "a"))
+        else:
+            print(model_name, ' Confusion Matrix', file=open("Terminal_Output.txt", "a"))
+            print(confusion, file=open("Terminal_Output.txt", "a"))
+            print('\n', file=open("Terminal_Output.txt", "a"))
         fig, ax = plt.subplots(figsize=(7.5, 7.5))
         ax.matshow(confusion, cmap=plt.cm.winter, alpha=0.3)
         for i in range(confusion.shape[0]):
@@ -169,7 +229,8 @@ def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name):
 
         plt.xlabel('Predictions', fontsize=18)
         plt.ylabel('Actuals', fontsize=18)
-        plt.title('Confusion Matrix', fontsize=18)
+        title_name = 'Confusion Matrix ' + model_name
+        plt.title(title_name, fontsize=18)
         plt.show()
 
 
@@ -199,7 +260,7 @@ if __name__ == '__main__':
     x_train_tfidf, x_test_tfidf = tf_idf(x_train, x_test)           # Encode X with TFIDF
 
     #
-    #
+    # TODO: check if linear regression even makes sense for the task
     # Linear Regression model using BOW and TFIDF
     linear_regression_model_bow = linear_regression(x_train_bow, x_test_bow, y_train, y_test, SAVE, 'Linear_Regression_BOW')
     linear_regression_model_tfidf = linear_regression(x_train_tfidf, x_test_tfidf, y_train, y_test, SAVE, 'Linear_Regression_TFIDF')
@@ -208,11 +269,42 @@ if __name__ == '__main__':
     logistic_regression_model_bow = logistic_regression(x_train_bow, y_train, SAVE, 'Logistic_Regression_BOW')
     logistic_regression_model_tfidf = logistic_regression(x_train_tfidf, y_train, SAVE, 'Logistic_Regression_TFIDF')
 
+    # Naive Bayes model using BOW and TFIDF
+    naive_bayes_model_bow = naive_bayes(x_train_bow, y_train, SAVE, 'Naive_Bayes_BOW')
+    naive_bayes_model_tfidf = naive_bayes(x_train_tfidf, y_train, SAVE, 'Naive_Bayes_TFIDF')
+
+    # SVM model using BOW and TFIDF
+    svm_model_bow = svm_classifier(x_train_bow, y_train, SAVE, 'svm_BOW')
+    svm_model_TFIDF = svm_classifier(x_train_tfidf, y_train, SAVE, 'svm_TFIDF')
+
+    # Random Forest model using BOW and TFIDF
+    random_forest_model_bow = svm_classifier(x_train_bow, y_train, SAVE, 'Random_Forest_BOW')
+    random_forest_model_tfidf = svm_classifier(x_train_tfidf, y_train, SAVE, 'Random_Forest_TFIDF')
+
+
     # Assess the trained models
     assess_model(logistic_regression_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
                  'Logistic Regression BOW')
     assess_model(logistic_regression_model_tfidf, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
                  'Logistic Regression TFIDF')
+    assess_model(naive_bayes_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
+                 'Naive Bayes BOW')             # The IDE freaks out but it works
+    assess_model(naive_bayes_model_tfidf, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
+                 'Naive Bayes TFIDF')           # The IDE freaks out but it works
+    # svm_model_bow throw a warning due to the fact that one of the label is never predicted by the model --> bad model
+    assess_model(svm_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
+                 'SVM BOW')                     # The IDE freaks out but it works
+    assess_model(svm_model_TFIDF, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
+                 'SVM TFIDF')                   # The IDE freaks out but it works
+    # random_forest_model_bow throw a warning due to one of the label is never predicted by the model --> bad model
+    assess_model(random_forest_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
+                 'Random Forest BOW')  # The IDE freaks out but it works
+    assess_model(random_forest_model_tfidf, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
+                 'Random Forest TFIDF')  # The IDE freaks out but it works
+
+
+
+
 
 
 
