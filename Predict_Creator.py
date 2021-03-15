@@ -87,7 +87,7 @@ def tf_idf(x_train, x_test):
     return x_train_tfidf, x_test_tfidf
 
 
-def linear_regression(x_train, x_test, y_train, y_test, SAVE, model_name):
+def linear_regression(x_train, x_test, y_train, y_test, SAVE, model_name, column_head_x):
     """
     This function trains the model using linear regression
 
@@ -120,11 +120,11 @@ def linear_regression(x_train, x_test, y_train, y_test, SAVE, model_name):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '.sav')
+        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
-def logistic_regression(x_train, y_train, SAVE, model_name):
+def logistic_regression(x_train, y_train, SAVE, model_name, column_head_x):
     """
     This function trains the model using linear regression
 
@@ -139,11 +139,11 @@ def logistic_regression(x_train, y_train, SAVE, model_name):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '.sav')
+        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
-def naive_bayes(x_train, y_train, SAVE, model_name):
+def naive_bayes(x_train, y_train, SAVE, model_name, column_head_x):
     # instantiating the model with simple Logistic Regression..
     model = MultinomialNB()
     # training the model...
@@ -151,11 +151,11 @@ def naive_bayes(x_train, y_train, SAVE, model_name):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '.sav')
+        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
-def svm_classifier(x_train, y_train, SAVE, model_name):
+def svm_classifier(x_train, y_train, SAVE, model_name, column_head_x):
     # instantiating the model with simple Logistic Regression..
     model = SVC()
     # training the model...
@@ -163,11 +163,11 @@ def svm_classifier(x_train, y_train, SAVE, model_name):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '.sav')
+        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
-def random_forest_bow(x_train, y_train, SAVE, model_name):
+def random_forest_bow(x_train, y_train, SAVE, model_name, column_head_x):
     # instantiating the model with simple Logistic Regression..
     model = RandomForestClassifier()
     # training the model...
@@ -175,11 +175,11 @@ def random_forest_bow(x_train, y_train, SAVE, model_name):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '.sav')
+        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
-def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name):
+def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name, concat_status, column_head_x):
     """
     This function asses the input model
 
@@ -218,9 +218,9 @@ def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name):
             print(confusion, file=open("Terminal_Output.txt", "a"))
             print('\n', file=open("Terminal_Output.txt", "a"))
         else:
-            print(model_name, ' Confusion Matrix', file=open("Terminal_Output.txt", "a"))
-            print(confusion, file=open("Terminal_Output.txt", "a"))
-            print('\n', file=open("Terminal_Output.txt", "a"))
+            print(model_name, ' Confusion Matrix')
+            print(confusion)
+            print('\n')
         fig, ax = plt.subplots(figsize=(7.5, 7.5))
         ax.matshow(confusion, cmap=plt.cm.winter, alpha=0.3)
         for i in range(confusion.shape[0]):
@@ -229,15 +229,27 @@ def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name):
 
         plt.xlabel('Predictions', fontsize=18)
         plt.ylabel('Actuals', fontsize=18)
-        title_name = 'Confusion Matrix ' + model_name
-        plt.title(title_name, fontsize=18)
-        plt.show()
+        if concat_status is True:
+            title_name = model_name + '\nCreator classification from History and Power text'
+        else:
+            title_name = model_name + '\nCreator classification from only History'
 
+        plt.title(title_name, fontsize=18)
+        plt.tight_layout()
+        if SAVE is True:
+            plt.savefig("Figures/" + model_name + '_' + column_head_x)
+        plt.show()
 
 if __name__ == '__main__':
 
     column_head_y = 'creator'
-    column_head_x = 'history_text'
+    # column_head_x = 'history_text'
+    column_head_x = 'history_power_text'
+
+    if column_head_x == 'history_power_text':
+        concat_status = True
+    else:
+        concat_status = False
     seed = 42
 
     DISPLAY = True
@@ -247,6 +259,11 @@ if __name__ == '__main__':
 
     # Load the Dataset and Drop the np.nan values of the table
     df = pd.read_csv('datasets/Preprocessed.csv')
+
+    df.loc[:, column_head_x] = df.loc[:, 'history_text'].astype(str) + df.loc[:, 'powers_text'].astype(str)
+
+
+
     df_interest = df.dropna(subset=[column_head_y, column_head_x])
 
 
@@ -262,45 +279,45 @@ if __name__ == '__main__':
     #
     # TODO: check if linear regression even makes sense for the task
     # Linear Regression model using BOW and TFIDF
-    linear_regression_model_bow = linear_regression(x_train_bow, x_test_bow, y_train, y_test, SAVE, 'Linear_Regression_BOW')
-    linear_regression_model_tfidf = linear_regression(x_train_tfidf, x_test_tfidf, y_train, y_test, SAVE, 'Linear_Regression_TFIDF')
+    linear_regression_model_bow = linear_regression(x_train_bow, x_test_bow, y_train, y_test, SAVE, 'Linear_Regression_BOW', column_head_x)
+    linear_regression_model_tfidf = linear_regression(x_train_tfidf, x_test_tfidf, y_train, y_test, SAVE, 'Linear_Regression_TFIDF', column_head_x)
 
     # Logistic Regression model using BOW and TFIDF
-    logistic_regression_model_bow = logistic_regression(x_train_bow, y_train, SAVE, 'Logistic_Regression_BOW')
-    logistic_regression_model_tfidf = logistic_regression(x_train_tfidf, y_train, SAVE, 'Logistic_Regression_TFIDF')
+    logistic_regression_model_bow = logistic_regression(x_train_bow, y_train, SAVE, 'Logistic_Regression_BOW', column_head_x)
+    logistic_regression_model_tfidf = logistic_regression(x_train_tfidf, y_train, SAVE, 'Logistic_Regression_TFIDF', column_head_x)
 
     # Naive Bayes model using BOW and TFIDF
-    naive_bayes_model_bow = naive_bayes(x_train_bow, y_train, SAVE, 'Naive_Bayes_BOW')
-    naive_bayes_model_tfidf = naive_bayes(x_train_tfidf, y_train, SAVE, 'Naive_Bayes_TFIDF')
+    naive_bayes_model_bow = naive_bayes(x_train_bow, y_train, SAVE, 'Naive_Bayes_BOW', column_head_x)
+    naive_bayes_model_tfidf = naive_bayes(x_train_tfidf, y_train, SAVE, 'Naive_Bayes_TFIDF', column_head_x)
 
     # SVM model using BOW and TFIDF
-    svm_model_bow = svm_classifier(x_train_bow, y_train, SAVE, 'svm_BOW')
-    svm_model_TFIDF = svm_classifier(x_train_tfidf, y_train, SAVE, 'svm_TFIDF')
+    svm_model_bow = svm_classifier(x_train_bow, y_train, SAVE, 'svm_BOW', column_head_x)
+    svm_model_TFIDF = svm_classifier(x_train_tfidf, y_train, SAVE, 'svm_TFIDF', column_head_x)
 
     # Random Forest model using BOW and TFIDF
-    random_forest_model_bow = svm_classifier(x_train_bow, y_train, SAVE, 'Random_Forest_BOW')
-    random_forest_model_tfidf = svm_classifier(x_train_tfidf, y_train, SAVE, 'Random_Forest_TFIDF')
+    random_forest_model_bow = svm_classifier(x_train_bow, y_train, SAVE, 'Random_Forest_BOW', column_head_x)
+    random_forest_model_tfidf = svm_classifier(x_train_tfidf, y_train, SAVE, 'Random_Forest_TFIDF', column_head_x)
 
 
     # Assess the trained models
     assess_model(logistic_regression_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
-                 'Logistic Regression BOW')
+                 'Logistic Regression BOW', concat_status, column_head_x)
     assess_model(logistic_regression_model_tfidf, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
-                 'Logistic Regression TFIDF')
+                 'Logistic Regression TFIDF', concat_status, column_head_x)
     assess_model(naive_bayes_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
-                 'Naive Bayes BOW')             # The IDE freaks out but it works
+                 'Naive Bayes BOW', concat_status, column_head_x)             # The IDE freaks out but it works
     assess_model(naive_bayes_model_tfidf, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
-                 'Naive Bayes TFIDF')           # The IDE freaks out but it works
+                 'Naive Bayes TFIDF', concat_status, column_head_x)           # The IDE freaks out but it works
     # svm_model_bow throw a warning due to the fact that one of the label is never predicted by the model --> bad model
     assess_model(svm_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
-                 'SVM BOW')                     # The IDE freaks out but it works
+                 'SVM BOW', concat_status, column_head_x)                     # The IDE freaks out but it works
     assess_model(svm_model_TFIDF, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
-                 'SVM TFIDF')                   # The IDE freaks out but it works
+                 'SVM TFIDF', concat_status, column_head_x)                   # The IDE freaks out but it works
     # random_forest_model_bow throw a warning due to one of the label is never predicted by the model --> bad model
     assess_model(random_forest_model_bow, x_train_bow, x_test_bow, y_train, y_test, DISPLAY,
-                 'Random Forest BOW')  # The IDE freaks out but it works
+                 'Random Forest BOW', concat_status, column_head_x)  # The IDE freaks out but it works
     assess_model(random_forest_model_tfidf, x_train_tfidf, x_test_tfidf, y_train, y_test, DISPLAY,
-                 'Random Forest TFIDF')  # The IDE freaks out but it works
+                 'Random Forest TFIDF', concat_status, column_head_x)  # The IDE freaks out but it works
 
 
 
