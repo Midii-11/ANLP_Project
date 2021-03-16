@@ -53,10 +53,6 @@ def bag_of_words(x_train, x_test):
     :param x_test:              Series containing the text of each cell of the testing set
     :return:                    Returns the X training and testing sets processed by BOW (txt --> num)
     """
-    #TODO: Could implement 2 dataframes holding the x_text_bow_train of 'history_text' and 'powers_text'. One for
-    #       x_text_bow_train and one for x_text_bow_test.
-    # This would enable us to use multiple-inputs models.
-    # eg: Use 'history_text' AND 'powers_text' to predict the creator.
 
     # defining the bag-of-words transformer on the text-processed corpus
     bow_transformer = CountVectorizer(analyzer='word').fit(x_train)
@@ -120,7 +116,7 @@ def linear_regression(x_train, x_test, y_train, y_test, SAVE, model_name, column
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
+        joblib.dump(model, 'Models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
@@ -139,7 +135,7 @@ def logistic_regression(x_train, y_train, SAVE, model_name, column_head_x):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
+        joblib.dump(model, 'Models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
@@ -151,7 +147,7 @@ def naive_bayes(x_train, y_train, SAVE, model_name, column_head_x):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
+        joblib.dump(model, 'Models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
@@ -163,7 +159,7 @@ def svm_classifier(x_train, y_train, SAVE, model_name, column_head_x):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
+        joblib.dump(model, 'Models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
@@ -175,7 +171,7 @@ def random_forest_bow(x_train, y_train, SAVE, model_name, column_head_x):
 
     # save the model to disk
     if SAVE is True:
-        joblib.dump(model, 'models/' + model_name + '_' + column_head_x + '.sav')
+        joblib.dump(model, 'Models/' + model_name + '_' + column_head_x + '.sav')
     return model
 
 
@@ -245,24 +241,22 @@ if __name__ == '__main__':
     column_head_y = 'creator'
     # column_head_x = 'history_text'
     column_head_x = 'history_power_text'
-
-    if column_head_x == 'history_power_text':
-        concat_status = True
-    else:
-        concat_status = False
     seed = 42
 
     DISPLAY = True
     # DISPLAY = False
-    # SAVE = True
-    SAVE = False
+    SAVE = True
+    # SAVE = False
 
     # Load the Dataset and Drop the np.nan values of the table
     df = pd.read_csv('datasets/Preprocessed.csv')
 
-    df.loc[:, column_head_x] = df.loc[:, 'history_text'].astype(str) + df.loc[:, 'powers_text'].astype(str)
+    if column_head_x == 'history_power_text':
+        concat_status = True
+        df.loc[:, column_head_x] = df.loc[:, 'history_text'].astype(str) + df.loc[:, 'powers_text'].astype(str)
 
-
+    else:
+        concat_status = False
 
     df_interest = df.dropna(subset=[column_head_y, column_head_x])
 

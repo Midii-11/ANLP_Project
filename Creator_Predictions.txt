@@ -3,6 +3,11 @@ Linear_Regression_BOW :
 -17.96723539347752
 
 
+Linear_Regression_BOW :
+0.9999999995995915
+-17.96723539347752
+
+
 Linear_Regression_TFIDF :
 0.9999999999999942
 0.5838115292027695
@@ -160,51 +165,165 @@ Random Forest TFIDF  Confusion Matrix
  [  4  19  13]]
 
 
-Logistic Regression BOW  Confusion Matrix
-[[ 91  11   2]
- [ 11 160   0]
- [  6   9  21]]
+Linear_Regression_BOW :
+0.9999999998481611
+-8.534852817094535
 
+
+Linear_Regression_TFIDF :
+0.9999999999999925
+0.5654151692751339
+
+
+Logistic Regression BOW  score:
+1.0
+0.8778135048231511
+              precision    recall  f1-score   support
+
+      Marvel       0.86      0.90      0.88       104
+          DC       0.88      0.93      0.91       171
+       Other       0.91      0.56      0.69        36
+
+    accuracy                           0.88       311
+   macro avg       0.88      0.80      0.83       311
+weighted avg       0.88      0.88      0.87       311
+
+Logistic Regression BOW  Confusion Matrix
+[[ 94   9   1]
+ [ 11 159   1]
+ [  4  12  20]]
+
+
+Logistic Regression TFIDF  score:
+0.984375
+0.909967845659164
+              precision    recall  f1-score   support
+
+      Marvel       0.95      0.93      0.94       104
+          DC       0.88      1.00      0.94       171
+       Other       1.00      0.42      0.59        36
+
+    accuracy                           0.91       311
+   macro avg       0.94      0.78      0.82       311
+weighted avg       0.92      0.91      0.90       311
 
 Logistic Regression TFIDF  Confusion Matrix
-[[ 95   9   0]
+[[ 97   7   0]
  [  0 171   0]
- [  4  15  17]]
+ [  5  16  15]]
 
+
+Naive Bayes BOW  score:
+0.984375
+0.9517684887459807
+              precision    recall  f1-score   support
+
+      Marvel       0.94      0.97      0.95       104
+          DC       0.96      1.00      0.98       171
+       Other       0.96      0.67      0.79        36
+
+    accuracy                           0.95       311
+   macro avg       0.95      0.88      0.91       311
+weighted avg       0.95      0.95      0.95       311
 
 Naive Bayes BOW  Confusion Matrix
-[[102   2   0]
+[[101   2   1]
  [  0 171   0]
- [  6   5  25]]
+ [  7   5  24]]
 
+
+Naive Bayes TFIDF  score:
+0.796875
+0.8231511254019293
+              precision    recall  f1-score   support
+
+      Marvel       0.98      0.79      0.87       104
+          DC       0.76      1.00      0.87       171
+       Other       1.00      0.08      0.15        36
+
+    accuracy                           0.82       311
+   macro avg       0.91      0.62      0.63       311
+weighted avg       0.86      0.82      0.79       311
 
 Naive Bayes TFIDF  Confusion Matrix
-[[ 78  26   0]
+[[ 82  22   0]
  [  0 171   0]
  [  2  31   3]]
 
 
+SVM BOW  score:
+0.6493055555555556
+0.6141479099678456
+              precision    recall  f1-score   support
+
+      Marvel       0.95      0.19      0.32       104
+          DC       0.59      1.00      0.74       171
+       Other       0.00      0.00      0.00        36
+
+    accuracy                           0.61       311
+   macro avg       0.51      0.40      0.35       311
+weighted avg       0.64      0.61      0.51       311
+
 SVM BOW  Confusion Matrix
-[[ 16  88   0]
+[[ 20  84   0]
  [  0 171   0]
  [  1  35   0]]
 
+
+SVM TFIDF  score:
+1.0
+0.8906752411575563
+              precision    recall  f1-score   support
+
+      Marvel       0.96      0.92      0.94       104
+          DC       0.85      1.00      0.92       171
+       Other       1.00      0.28      0.43        36
+
+    accuracy                           0.89       311
+   macro avg       0.94      0.73      0.77       311
+weighted avg       0.90      0.89      0.87       311
 
 SVM TFIDF  Confusion Matrix
-[[ 98   6   0]
+[[ 96   8   0]
  [  0 171   0]
- [  4  19  13]]
+ [  4  22  10]]
 
+
+Random Forest BOW  score:
+0.6493055555555556
+0.6141479099678456
+              precision    recall  f1-score   support
+
+      Marvel       0.95      0.19      0.32       104
+          DC       0.59      1.00      0.74       171
+       Other       0.00      0.00      0.00        36
+
+    accuracy                           0.61       311
+   macro avg       0.51      0.40      0.35       311
+weighted avg       0.64      0.61      0.51       311
 
 Random Forest BOW  Confusion Matrix
-[[ 16  88   0]
+[[ 20  84   0]
  [  0 171   0]
  [  1  35   0]]
 
 
+Random Forest TFIDF  score:
+1.0
+0.8906752411575563
+              precision    recall  f1-score   support
+
+      Marvel       0.96      0.92      0.94       104
+          DC       0.85      1.00      0.92       171
+       Other       1.00      0.28      0.43        36
+
+    accuracy                           0.89       311
+   macro avg       0.94      0.73      0.77       311
+weighted avg       0.90      0.89      0.87       311
+
 Random Forest TFIDF  Confusion Matrix
-[[ 98   6   0]
+[[ 96   8   0]
  [  0 171   0]
- [  4  19  13]]
+ [  4  22  10]]
 
 
