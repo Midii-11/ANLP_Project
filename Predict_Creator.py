@@ -239,14 +239,14 @@ def assess_model(model, x_train, x_test, y_train, y_test, DISPLAY, model_name, c
 if __name__ == '__main__':
 
     column_head_y = 'creator'
-    # column_head_x = 'history_text'
-    column_head_x = 'history_power_text'
+    column_head_x ='history_text'
+    # column_head_x = 'history_power_text'
     seed = 42
 
     DISPLAY = True
     # DISPLAY = False
-    SAVE = True
-    # SAVE = False
+    # SAVE = True
+    SAVE = False
 
     # Load the Dataset and Drop the np.nan values of the table
     df = pd.read_csv('datasets/Preprocessed.csv')
